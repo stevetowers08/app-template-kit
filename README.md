@@ -15,5 +15,5 @@ npm start   # http://localhost:3300
   lockfile names (pnpm, bun or npm). No lockfile fails rather than guessing.
 - Each app gets a fixed port from 3301 upwards, in catalog order.
 - An app that needs keys (Kiranism needs Clerk) fails with the dev server's own error shown.
-- Studio Admin is the Base UI edition, with 42 theme presets imported from tweakcn and a
+- Studio Admin is the Base UI edition, with extra theme presets imported from tweakcn and a
   Corner Rounding preference added (`npm run import:presets -- <names>` there adds more).
