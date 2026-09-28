@@ -94,6 +94,25 @@ async function waitForHttp(session) {
   }
 }
 
+// Dev servers compile each page on its first request, so a first click can sit for a second or
+// two with no feedback. Once the app is up, request every same-origin link on its start page,
+// one at a time, so those pages are compiled before they are clicked. Server-rendered apps only:
+// a client-rendered (Vite) app has no links in its HTML, so this does nothing there.
+async function warmLinks(session) {
+  const base = `http://localhost:${session.app.port}`;
+  const html = await (await fetch(`${base}${session.app.path ?? "/"}`)).text();
+  const paths = new Set(
+    [...html.matchAll(/href="(\/[^"#?]*)"/g)]
+      .map((match) => match[1])
+      .filter((path) => !path.startsWith("/_next/") && !/\.[a-z0-9]+$/i.test(path)),
+  );
+  for (const path of paths) {
+    if (current !== session || session.status !== "ready") return;
+    await fetch(`${base}${path}`).catch((err) => session.log.push(`warm-up: ${path} failed: ${err.message}`));
+  }
+  session.log.push(`warm-up: compiled ${paths.size} linked pages`);
+}
+
 async function start(app) {
   if (current?.app.id === app.id && current.status !== "error") return;
   stop();
@@ -112,6 +131,7 @@ async function start(app) {
     child.on("exit", (code) => fail(session, `the dev server exited with code ${code}`));
     await waitForHttp(session);
     if (current === session && session.status === "starting") session.status = "ready";
+    warmLinks(session).catch((err) => session.log.push(`warm-up stopped: ${err.message}`));
   } catch (err) {
     fail(session, err.message);
   }
