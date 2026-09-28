@@ -91,16 +91,7 @@
   function renderPicker() {
     const placeholder = new Option(`Pick one of ${apps.length} apps`, "");
     placeholder.disabled = true;
-    const groups = new Map();
-    for (const app of apps) {
-      if (!groups.has(app.group)) {
-        const group = document.createElement("optgroup");
-        group.label = app.group;
-        groups.set(app.group, group);
-      }
-      groups.get(app.group).append(new Option(label(app), app.id));
-    }
-    $("picker").replaceChildren(placeholder, ...groups.values());
+    $("picker").replaceChildren(placeholder, ...apps.map((app) => new Option(label(app), app.id)));
     $("picker").value = selected ?? "";
   }
 

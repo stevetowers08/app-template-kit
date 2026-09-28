@@ -1,12 +1,11 @@
 // Local switcher for the app templates in catalog.mjs. Runs one app at a time with its own
-// dev server and shows it in a frame, so dozens of apps never sit in memory at once.
-// Local use only: the Square UI licence forbids republishing its templates anywhere.
+// dev server and shows it in a frame, so the apps never all sit in memory at once.
 import { createServer } from "node:http";
 import { spawn, spawnSync } from "node:child_process";
-import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { REPOS, SQUARE_UI } from "./catalog.mjs";
+import { APPS } from "./catalog.mjs";
 
 const PORT = 3300;
 const FIRST_APP_PORT = 3301;
@@ -15,49 +14,9 @@ const POLL_MS = 1_000;
 const LOG_LINES = 40;
 const IS_WINDOWS = process.platform === "win32";
 const HERE = import.meta.dirname;
-const SQUARE_ROOT = join(HERE, SQUARE_UI.dir);
-const SQUARE_APPS_DIR = join(SQUARE_ROOT, "templates-baseui");
-
-// Name, description and hosted demo per Square UI app, from the free-templates table in its
-// README. An app missing from the table keeps null fields and the UI shows its folder name.
-function readSquareCatalog() {
-  const catalog = new Map();
-  const readme = readFileSync(join(SQUARE_ROOT, "README.md"), "utf8");
-  for (const line of readme.split(/\r?\n/)) {
-    if (!line.startsWith("| **")) continue;
-    const cells = line.split("|").map((cell) => cell.trim());
-    const source = cells.find((cell) => cell.includes("/templates-baseui/"));
-    const id = source?.match(/\/templates-baseui\/([^)/]+)\)/)?.[1];
-    if (!id) continue;
-    catalog.set(id, {
-      name: cells[1].replaceAll("**", ""),
-      description: cells[2],
-      demo: cells[3].match(/\((https?:\/\/[^)]+)\)/)?.[1] ?? null,
-    });
-  }
-  return catalog;
-}
-
-function listSquareApps() {
-  if (!existsSync(SQUARE_APPS_DIR)) return [];
-  const catalog = readSquareCatalog();
-  return readdirSync(SQUARE_APPS_DIR, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory() && existsSync(join(SQUARE_APPS_DIR, entry.name, "package.json")))
-    .map((entry) => entry.name)
-    .sort()
-    .map((id) => ({
-      group: SQUARE_UI.group,
-      id: `square-${id}`,
-      dir: join(SQUARE_APPS_DIR, id),
-      name: catalog.get(id)?.name ?? null,
-      description: catalog.get(id)?.description ?? null,
-      demo: catalog.get(id)?.demo ?? null,
-    }));
-}
 
 function listApps() {
-  const repos = REPOS.map((repo) => ({ ...repo, dir: join(HERE, repo.dir) }));
-  return [...repos, ...listSquareApps()].map((app, index) => ({ ...app, port: FIRST_APP_PORT + index }));
+  return APPS.map((app, index) => ({ ...app, dir: join(HERE, app.dir), port: FIRST_APP_PORT + index }));
 }
 
 function installCommand(dir) {
