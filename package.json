@@ -1,0 +1,10 @@
+{
+  "name": "template-switcher",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Local switcher for the Square UI app templates. One app runs at a time.",
+  "scripts": {
+    "start": "node server.mjs"
+  }
+}
