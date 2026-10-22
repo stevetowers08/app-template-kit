@@ -1,10 +1,11 @@
 {
-  "name": "template-switcher",
-  "version": "0.0.1",
+  "name": "app-template-kit",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Local switcher for the Square UI app templates. One app runs at a time.",
+  "description": "Browse admin app templates in one window, and the Claude Code setup skills that scaffold a repo from one.",
   "scripts": {
+    "clone": "node scripts/clone-templates.mjs",
     "start": "node server.mjs"
   }
 }

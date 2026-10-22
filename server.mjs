@@ -3,20 +3,25 @@
 import { createServer } from "node:http";
 import { spawn, spawnSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import { isAbsolute, join } from "node:path";
 
 import { APPS } from "./catalog.mjs";
 
-const PORT = 3300;
+const PORT = Number(process.env.PORT ?? 3300);
 const FIRST_APP_PORT = 3301;
 const READY_TIMEOUT_MS = 180_000;
 const POLL_MS = 1_000;
 const LOG_LINES = 40;
 const IS_WINDOWS = process.platform === "win32";
 const HERE = import.meta.dirname;
+// Where the template clones live. `npm run clone` fills this directory; point TEMPLATES_DIR at
+// an existing collection to use clones you already have.
+const TEMPLATES_DIR = process.env.TEMPLATES_DIR
+  ? (isAbsolute(process.env.TEMPLATES_DIR) ? process.env.TEMPLATES_DIR : join(HERE, process.env.TEMPLATES_DIR))
+  : join(HERE, "templates");
 
 function listApps() {
-  return APPS.map((app, index) => ({ ...app, dir: join(HERE, app.dir), port: FIRST_APP_PORT + index }));
+  return APPS.map((app, index) => ({ ...app, dir: join(TEMPLATES_DIR, app.dir), port: FIRST_APP_PORT + index }));
 }
 
 function installCommand(dir) {
@@ -119,7 +124,8 @@ async function start(app) {
   const session = { app, child: null, status: "starting", error: null, log: [] };
   current = session;
   try {
-    if (!existsSync(join(app.dir, "package.json"))) throw new Error(`not cloned: ${app.dir}`);
+    if (!existsSync(join(app.dir, "package.json")))
+      throw new Error(`not cloned: ${app.dir} - run "npm run clone" (or set TEMPLATES_DIR)`);
     if (!existsSync(join(app.dir, "node_modules"))) {
       session.status = "installing";
       await install(session);
@@ -190,5 +196,5 @@ for (const signal of ["SIGINT", "SIGTERM", "SIGHUP"]) {
 process.on("exit", stop);
 
 server.listen(PORT, () => {
-  console.log(`Template switcher: http://localhost:${PORT} (${apps.length} apps)`);
+  console.log(`Template switcher: http://localhost:${PORT} (${apps.length} apps from ${TEMPLATES_DIR})`);
 });
