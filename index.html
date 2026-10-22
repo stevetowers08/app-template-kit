@@ -36,7 +36,7 @@
   .bar a { color: var(--accent); font-size: 13px; text-decoration: none; white-space: nowrap; }
   .bar a:hover { text-decoration: underline; }
   .pill { font-size: 12px; padding: 2px 8px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
-  .pill.ready { color: var(--ok); } .pill.starting, .pill.installing { color: var(--warn); }
+  .pill.ready { color: var(--ok); } .pill.starting, .pill.installing, .pill.preparing { color: var(--warn); }
   .pill.error { color: var(--bad); }
   .stage { position: relative; min-height: 0; }
   iframe { width: 100%; height: 100%; border: 0; background: var(--panel); display: block; }
@@ -81,7 +81,7 @@
 </div>
 <script>
   const $ = (id) => document.getElementById(id);
-  const STATUS_TEXT = { installing: "Installing dependencies", starting: "Starting", ready: "Running", error: "Failed" };
+  const STATUS_TEXT = { installing: "Installing dependencies", preparing: "Building generated files", starting: "Starting", ready: "Running", error: "Failed" };
   const IDLE_MESSAGE = "Pick an app from the list at the top. It starts on demand; the first load takes a few seconds.";
   let apps = [];
   let selected = null;
@@ -152,7 +152,7 @@
       renderPicker();
     }
     render(state);
-    const busy = state.current && ["installing", "starting"].includes(state.current.status);
+    const busy = state.current && ["installing", "preparing", "starting"].includes(state.current.status);
     timer = setTimeout(refresh, busy ? 1000 : 5000);
   }
 

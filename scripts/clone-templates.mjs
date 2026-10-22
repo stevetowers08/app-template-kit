@@ -15,6 +15,7 @@ mkdirSync(TEMPLATES_DIR, { recursive: true });
 
 let failed = 0;
 for (const app of APPS) {
+  if (app.local) continue; // ships in this repo, nothing to clone
   const dir = join(TEMPLATES_DIR, app.dir);
   if (existsSync(dir)) {
     console.log(`have    ${app.dir}`);

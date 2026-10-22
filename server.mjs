@@ -21,7 +21,12 @@ const TEMPLATES_DIR = process.env.TEMPLATES_DIR
   : join(HERE, "templates");
 
 function listApps() {
-  return APPS.map((app, index) => ({ ...app, dir: join(TEMPLATES_DIR, app.dir), port: FIRST_APP_PORT + index }));
+  // A `local` app ships in this repo; the rest are clones under TEMPLATES_DIR.
+  return APPS.map((app, index) => ({
+    ...app,
+    dir: join(app.local ? HERE : TEMPLATES_DIR, app.dir),
+    port: FIRST_APP_PORT + index,
+  }));
 }
 
 function installCommand(dir) {
@@ -72,8 +77,7 @@ function fail(session, message) {
   killTree(session.child);
 }
 
-function install(session) {
-  const [command, args] = installCommand(session.app.dir);
+function runToCompletion(command, args, session) {
   return new Promise((resolve, reject) => {
     const child = spawnIn(command, args, session);
     child.on("error", reject);
@@ -81,6 +85,18 @@ function install(session) {
       code === 0 ? resolve() : reject(new Error(`${command} ${args.join(" ")} exited with code ${code}`)),
     );
   });
+}
+
+function install(session) {
+  const [command, args] = installCommand(session.app.dir);
+  return runToCompletion(command, args, session);
+}
+
+// An app whose dev server needs a generated file first (latent-ui writes its looks CSS from a
+// script that `predev` would normally run; the switcher starts the dev binary directly).
+function prepare(session) {
+  const [bin, ...args] = session.app.prepare;
+  return runToCompletion(join(session.app.dir, "node_modules", ".bin", bin), args, session);
 }
 
 async function waitForHttp(session) {
@@ -129,6 +145,12 @@ async function start(app) {
     if (!existsSync(join(app.dir, "node_modules"))) {
       session.status = "installing";
       await install(session);
+      if (current !== session) return;
+      session.status = "starting";
+    }
+    if (app.prepare) {
+      session.status = "preparing";
+      await prepare(session);
       if (current !== session) return;
       session.status = "starting";
     }

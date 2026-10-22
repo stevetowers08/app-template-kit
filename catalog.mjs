@@ -2,6 +2,7 @@
 // directory (TEMPLATES_DIR, default `templates/` beside this file); `repo` is where
 // `npm run clone` gets it from.
 // `dev` overrides the start command for an app that needs one; `{port}` is filled in.
+// `prepare` runs once before the dev server, for an app that needs a generated file first.
 // Otherwise it is inferred from package.json: Next.js or Vite.
 // `path` is the page the frame opens, for an app whose root is a landing page.
 // Descriptions are the repo's own GitHub description or README line, not ours.
@@ -32,6 +33,15 @@ export const APPS = [
     description: "A full-featured CRM built with React, shadcn/ui, and Supabase. Runs here in its demo mode.",
     demo: "http://marmelab.com/atomic-crm/",
     dev: ["vite", "--config", "vite.demo.config", "--port", "{port}", "--strictPort"],
+  },
+  {
+    id: "latent-ui",
+    name: "Latent UI (in this repo)",
+    dir: "latent-ui",
+    local: true,
+    prepare: ["tsx", "scripts/build-registry.ts"],
+    description: "The surface gallery in latent-ui/: card header, stat card, table and list variants under five looks, with a copyable registry recipe.",
+    path: "/",
   },
   {
     id: "kiranism-dashboard",
