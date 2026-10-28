@@ -2,7 +2,7 @@
   "$comment": "Which skills this repo publishes. The find-and-replace rules that strip private details live in the maintainer's ~/.claude/skills-publish.json, because the text they find is itself private. See AGENTS.md -> Publishing skills.",
   "skills": [
     "setup-new-repo",
-    "audit-documentation",
+    "audit-repo",
     "setup-design-system",
     "audit-design-system",
     "audit-database",
@@ -17,9 +17,15 @@
     "audit-observability",
     "audit-production-readiness",
     "research",
+    "audit-skill-freshness",
     "update-skills"
   ],
-  "agents": [],
+  "bundle": [
+    {
+      "from": "agents/audit-repo.md",
+      "into": "audit-repo/references/agent.md"
+    }
+  ],
   "dropBlocks": [
     {
       "$comment": "Pointers into a private knowledge base. The playbook carries the public version.",

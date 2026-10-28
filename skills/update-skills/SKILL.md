@@ -1,25 +1,45 @@
 ---
 name: update-skills
-description: Keep the app playbook skills up to date. Updates the installed skills from the app-template-kit repo, and for the repo maintainer, publishes edited skills back into the kit with private details removed. Use when asked to update, refresh, install or publish skills, "are my skills out of date", or right after editing a skill the kit ships.
+description: Monthly upkeep for Claude Code skills. Updates installed skills to their latest versions, runs /audit-skill-freshness to catch advice that has gone out of date, and can set up a monthly scheduled update. For the app-template-kit maintainer it also publishes edited skills into the kit. Use when asked to update or refresh skills, "are my skills out of date", a monthly skill check, scheduling skill updates, or publishing skills.
 disable-model-invocation: true
-argument-hint: "[update | publish]"
-allowed-tools: Bash, Read, Edit, Glob, Grep, AskUserQuestion
+argument-hint: "[update | check | schedule | publish]"
+allowed-tools: Bash, Read, Edit, Glob, Grep, Skill, AskUserQuestion
 ---
 
 # update-skills
 
-Two jobs. No argument means `update`, unless this is the maintainer's machine: if
-`~/.claude/skills-publish.json` exists, `~/.claude/skills` is the source the kit is built from, so
-default to `publish` and never overwrite those skills with the kit's copies.
+Run it once a month. No argument runs `update`, then `check`.
+
+**Maintainer machine:** if `~/.claude/skills-publish.json` exists, `~/.claude/skills` is the source
+app-template-kit is built from. Never overwrite those skills with the kit's copies; use `publish`.
 
 ## update
 
-1. Installed with `npx skills`? Run `npx skills check`, show the result, then `npx skills update -g`.
-2. Installed from a clone of the kit? `git pull --ff-only` in it (dirty tree: say so and stop),
-   then `npm run skills:status` and `npm run skills:install`.
-   A skill shown as `keep (yours differs)` has local edits. Show the diff and ask before
-   `npm run skills:install -- --only <name> --force`.
-3. Say what changed. New skills load in the next Claude Code session.
+1. `npx skills check`. Show the user which skills have newer versions.
+2. `npx skills update -g -y` for skills installed for every project. For a project install, run
+   `npx skills update -p -y` in that repo.
+3. Installed from a clone of app-template-kit instead? In the clone: `git pull --ff-only` (dirty
+   tree: say so and stop), then `npm run skills:install`. A skill shown as `keep (yours differs)`
+   has local edits: show the diff and ask before `npm run skills:install -- --only <name> --force`.
+4. Say what changed. Updated skills load in the next Claude Code session.
+
+## check
+
+Run `/audit-skill-freshness`. It finds skills whose versions, settings or APIs have moved on,
+checks each against official docs, and proposes cited fixes. Nothing is edited without a yes.
+Fix the user's own skills directly. For someone else's skill, report it to its repo or wait for
+their update.
+
+## schedule
+
+Sets a monthly automatic update. Ask first, show the exact command, create it only on a yes.
+
+- Windows: `schtasks /create /tn "Update Claude skills" /sc monthly /d 1 /st 09:00 /tr "cmd /c npx skills update -g -y"`
+- macOS or Linux: add `0 9 1 * * npx skills update -g -y` with `crontab -e`.
+
+Then run it once (`schtasks /run /tn "Update Claude skills"`, or the command by hand) and confirm
+it worked: a scheduled task may not see `npx` on its PATH. The `check` step needs a person to
+approve fixes, so it stays a monthly manual run; suggest a calendar reminder.
 
 ## publish (maintainer)
 

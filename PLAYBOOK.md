@@ -8,7 +8,7 @@ skill that checks it. Work through them top to bottom.
 
 | Part | Build with | Check with |
 |---|---|---|
-| [Setup](#setup) | `setup-new-repo` | `audit-documentation` |
+| [Setup](#setup) | `setup-new-repo` | `audit-repo` |
 | [Design](#design) | `setup-design-system` | `audit-design-system` |
 | [Data and auth](#data-and-auth) | `supabase` | `audit-database` |
 | [APIs](#apis) | `setup-error-handling` | `audit-api` |
@@ -18,6 +18,7 @@ skill that checks it. Work through them top to bottom.
 | [Security](#security) | | `audit-security` |
 | [Monitoring](#monitoring) | `setup-sentry` | `audit-observability` |
 | [Launch](#launch) | | `audit-production-readiness` |
+| [Upkeep](#upkeep) | `update-skills` | `audit-skill-freshness` |
 
 Build skills add something to your app. Check skills score it and list what to fix. Run one at a
 time: each reads what the last one left behind.
@@ -33,7 +34,7 @@ Before any code. Gives the agent the rules of your repo and one command that pro
 
 **Build:** `setup-new-repo`
 
-**Check:** `audit-documentation`
+**Check:** `audit-repo`
 
 **Done when:** `verify` passes in CI and a first page is live on a preview link.
 
@@ -168,6 +169,21 @@ Before the first real users.
 
 **Done when:** you have rolled back once and restored a backup once.
 
+## Upkeep
+
+Every month. Frameworks move fast, and a skill with old advice gives old answers with confidence.
+
+- Update your installed skills to their latest versions.
+- Check your skills for advice that has gone out of date: versions, renamed settings, old APIs.
+- Approve each fix yourself. Never let a skill rewrite itself.
+- Update your app's dependencies at the same time.
+
+**Build:** `update-skills` (it can also schedule the monthly update for you)
+
+**Check:** `audit-skill-freshness`
+
+**Done when:** skills are up to date and the check finds nothing out of date.
+
 ## Getting the skills
 
 Install everything in this playbook:
@@ -179,8 +195,7 @@ npx skills add stevetowers08/app-template-kit -g -a claude-code
 Two come from their makers: `npx skills add shadcn/ui` for components and
 `npx skills add supabase/agent-skills` for the database.
 
-Two more are included: `research` checks current best practice on any topic, and
-`update-skills` keeps these skills up to date.
+`research` is included too: it checks current best practice on any topic.
 
 ## Sources
 

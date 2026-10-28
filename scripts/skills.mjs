@@ -161,7 +161,17 @@ function sync() {
     }
     for (const f of files(src)) stageFile(f, join(stage, "skills", name, relative(src, f)), name);
   }
-  for (const name of MANIFEST.agents) {
+  // A file from elsewhere in the library shipped inside a skill, e.g. a subagent's instructions,
+  // so one `npx skills add` installs everything that skill needs.
+  for (const b of MANIFEST.bundle ?? []) {
+    const src = join(from, b.from);
+    if (!existsSync(src)) {
+      missing.push(b.from);
+      continue;
+    }
+    stageFile(src, join(stage, "skills", b.into), b.into.split("/")[0]);
+  }
+  for (const name of MANIFEST.agents ?? []) {
     const src = join(from, "agents", `${name}.md`);
     if (!existsSync(src)) {
       missing.push(`agents/${name}.md`);

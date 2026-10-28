@@ -88,61 +88,56 @@ const page = `<!doctype html>
     --paper: #ffffff;
     --done: #2f7d5b;
   }
-  @page { size: A4; margin: 18mm 18mm 20mm; }
+  @page { size: A4; margin: 14mm 16mm 16mm; }
   * { box-sizing: border-box; }
   body {
     margin: 0; background: var(--paper); color: var(--body);
-    font: 10pt/1.55 "Segoe UI Variable Text", "Segoe UI", -apple-system, "Helvetica Neue", Arial, sans-serif;
+    font: 9.5pt/1.5 "Segoe UI Variable Text", "Segoe UI", -apple-system, "Helvetica Neue", Arial, sans-serif;
     -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
   a { color: inherit; text-decoration: none; }
   strong { color: var(--ink); font-weight: 600; }
+  p { margin: 0 0 2mm; }
 
-  /* Cover: title, how to use, the map */
-  .cover { break-after: page; }
-  .cover h1 {
-    font-size: 34pt; line-height: 1.05; letter-spacing: -0.02em; color: var(--ink);
-    margin: 18mm 0 6mm; font-weight: 700;
-  }
-  .cover > p { font-size: 11pt; max-width: 150mm; margin: 0 0 4mm; }
-  .cover > p:first-of-type { font-size: 13pt; color: var(--ink); margin-bottom: 8mm; }
-  table.map { width: 100%; border-collapse: collapse; margin: 9mm 0 7mm; font-size: 10pt; }
+  /* Top: title, how to use, the map. Flows straight into the parts. */
+  h1 { font-size: 20pt; line-height: 1.15; letter-spacing: -0.01em; color: var(--ink); margin: 0 0 2mm; font-weight: 700; }
+  .cover > p:first-of-type { font-size: 10.5pt; color: var(--ink); }
+  table.map { width: 100%; border-collapse: collapse; margin: 3mm 0 3mm; }
   table.map th {
-    text-align: left; font-size: 8pt; font-weight: 600; text-transform: uppercase;
-    letter-spacing: 0.08em; color: var(--muted); padding: 0 0 3mm; border-bottom: 1.5px solid var(--ink);
+    text-align: left; font-size: 7pt; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--muted); padding: 0 0 1.5mm; border-bottom: 1px solid var(--ink);
   }
-  table.map td { padding: 3mm 0; border-bottom: 1px solid var(--line); vertical-align: middle; }
-  table.map td:first-child { font-weight: 600; color: var(--ink); width: 34%; }
+  table.map td { padding: 1.3mm 0; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  table.map td:first-child { font-weight: 600; color: var(--ink); width: 30%; }
 
   /* Chips: filled for build, outlined for check */
   .chip {
-    display: inline-block; font: 500 8.6pt/1 "Cascadia Mono", Consolas, "SF Mono", Menlo, monospace;
-    padding: 1.6mm 2.4mm; border-radius: 99px; border: 1px solid var(--line);
+    display: inline-block; font: 500 7.8pt/1 "Cascadia Mono", Consolas, "SF Mono", Menlo, monospace;
+    padding: 1mm 2mm; border-radius: 99px; border: 1px solid var(--line);
     background: var(--soft); color: var(--ink); white-space: nowrap;
   }
   table.map td:nth-child(2) .chip, .meta-build .chip { background: var(--ink); border-color: var(--ink); color: var(--paper); }
   table.map td:nth-child(3) .chip, .meta-check .chip { background: var(--paper); border-color: var(--ink); }
 
-  /* Parts */
-  .part { break-inside: avoid; padding: 7mm 0 6mm; border-top: 1px solid var(--line); }
-  .cover + .part { border-top: 0; padding-top: 0; }
-  h2 { font-size: 18pt; letter-spacing: -0.01em; color: var(--ink); margin: 0 0 1.5mm; font-weight: 700; }
-  h2 + p { color: var(--muted); margin: 0 0 3.5mm; }
-  ul { margin: 0 0 4.5mm; padding: 0; list-style: none; }
-  li { position: relative; padding-left: 5mm; margin: 0 0 1.6mm; }
-  li::before { content: ""; position: absolute; left: 0.6mm; top: 2.2mm; width: 1.6mm; height: 1.6mm; border-radius: 50%; background: var(--ink); }
-  li code { font: 9pt Consolas, monospace; }
+  /* Parts: one rolling document, no forced page breaks */
+  .part { padding: 4mm 0 3mm; border-top: 1px solid var(--line); }
+  h2 { font-size: 12.5pt; color: var(--ink); margin: 0 0 0.5mm; font-weight: 700; break-after: avoid; }
+  h2 + p { color: var(--muted); margin: 0 0 1.5mm; break-after: avoid; }
+  ul { margin: 0 0 2mm; padding: 0; list-style: none; }
+  li { position: relative; padding-left: 4mm; margin: 0 0 0.6mm; break-inside: avoid; }
+  li::before { content: ""; position: absolute; left: 0.5mm; top: 1.9mm; width: 1.3mm; height: 1.3mm; border-radius: 50%; background: var(--ink); }
+  li code { font: 8.5pt Consolas, monospace; }
 
-  .strip { display: flex; flex-wrap: wrap; gap: 3mm 8mm; align-items: center; padding: 3.5mm 4mm; background: var(--soft); border-radius: 3mm; }
-  .meta { display: flex; align-items: center; gap: 2.5mm; }
-  .label { font-size: 7.5pt; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+  .strip { display: flex; flex-wrap: wrap; gap: 1.5mm 6mm; align-items: center; padding: 2mm 3mm; background: var(--soft); border-radius: 2mm; break-inside: avoid; }
+  .meta { display: flex; align-items: center; gap: 2mm; }
+  .label { font-size: 7pt; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
   .meta-done-when { flex-basis: 100%; color: var(--ink); }
   .meta-done-when .label { color: var(--done); }
   .meta-done-when .label::before { content: "\\2713  "; }
 
-  pre { background: var(--soft); border-radius: 3mm; padding: 3.5mm 4mm; margin: 0 0 4mm; white-space: pre-wrap; }
-  pre code { font: 9pt Consolas, "SF Mono", Menlo, monospace; color: var(--ink); }
-  #sources + p { font-size: 8.5pt; color: var(--muted); }
+  pre { background: var(--soft); border-radius: 2mm; padding: 2mm 3mm; margin: 0 0 2mm; white-space: pre-wrap; break-inside: avoid; }
+  pre code { font: 8.5pt Consolas, "SF Mono", Menlo, monospace; color: var(--ink); }
+  #sources + p { font-size: 8pt; color: var(--muted); }
 </style></head><body>${html}</body></html>`;
 
 const tmp = join(tmpdir(), `app-playbook-${process.pid}.html`);
