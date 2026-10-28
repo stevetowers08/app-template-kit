@@ -1,72 +1,34 @@
 ---
 name: update-skills
-description: Keep the app-building skills current. Installs or updates the skills shipped in the app-template-kit repo into ~/.claude/skills (or a project's .claude/skills), checks them for stale versions and APIs via /audit-skill-freshness, and, for the repo maintainer, publishes edited skills back into the kit with private details stripped. Use when asked to install, update, refresh, sync or publish skills, "are my skills out of date", "get the latest skills", or right after editing a skill the kit ships.
+description: Keep the app playbook skills up to date. Updates the installed skills from the app-template-kit repo, and for the repo maintainer, publishes edited skills back into the kit with private details removed. Use when asked to update, refresh, install or publish skills, "are my skills out of date", or right after editing a skill the kit ships.
 disable-model-invocation: true
-argument-hint: "[install | check | publish] [skill names, comma separated]"
-allowed-tools: Bash, Read, Edit, Glob, Grep, Skill, AskUserQuestion
+argument-hint: "[update | publish]"
+allowed-tools: Bash, Read, Edit, Glob, Grep, AskUserQuestion
 ---
 
 # update-skills
 
-Three jobs, one per argument. No argument means `install`, unless you are the maintainer (step 0).
+Two jobs. No argument means `update`, unless this is the maintainer's machine: if
+`~/.claude/skills-publish.json` exists, `~/.claude/skills` is the source the kit is built from, so
+default to `publish` and never overwrite those skills with the kit's copies.
 
-```
-install  -> pull the kit, show what would change, copy new and updated skills in
-check    -> /audit-skill-freshness: find guidance that has gone stale, propose cited fixes
-publish  -> maintainer only: copy your edited skills into the kit, scrubbed, then commit
-```
+## update
 
-## Step 0 - Find the kit, and who you are
-
-1. Locate the kit: `$APP_TEMPLATE_KIT` if set, else look for a checkout named `app-template-kit`
-   under the usual code folders. None found: ask where to clone it, then
-   `git clone https://github.com/stevetowers08/app-template-kit`.
-2. Read its `skills.json`. That file is the list of what the kit publishes.
-3. **Maintainer test.** If `~/.claude/skills-publish.json` exists, this machine's
-   `~/.claude/skills` is the *source* the kit is built from. On a maintainer machine never run
-   `install --force`: it would replace the full private versions with the public copies.
-   Default to `publish` there instead.
-
-## install
-
-1. `git -C <kit> status --short`. Dirty: say so and stop; do not stash or reset. Clean:
-   `git -C <kit> pull --ff-only`.
-2. `npm run skills:status` in the kit (add `-- --project` to target the current repo's
-   `.claude/skills` instead of `~/.claude/skills`). Show the user the table as printed.
-3. `npm run skills:install`. It adds new skills and skips identical ones. A skill marked
-   `keep (yours differs)` has local edits: show the diff
-   (`git diff --no-index <installed> <kit>/skills/<name>`) and ask before replacing it with
-   `npm run skills:install -- --only <name> --force`. Never pass `--force` without `--only`.
-4. Report: added, updated, kept, and that a new Claude Code session picks them up.
-
-## check
-
-Run `/audit-skill-freshness` over the installed skills (or the names given). It proposes cited
-fixes and edits nothing without approval. Approved edits go into the **source** skill (the
-maintainer's `~/.claude/skills/<name>`), then `publish`. Editing the kit copy directly is
-overwritten by the next publish.
+1. Installed with `npx skills`? Run `npx skills check`, show the result, then `npx skills update -g`.
+2. Installed from a clone of the kit? `git pull --ff-only` in it (dirty tree: say so and stop),
+   then `npm run skills:status` and `npm run skills:install`.
+   A skill shown as `keep (yours differs)` has local edits. Show the diff and ask before
+   `npm run skills:install -- --only <name> --force`.
+3. Say what changed. New skills load in the next Claude Code session.
 
 ## publish (maintainer)
 
-1. A new skill to ship? Add its name to `skills.json` -> `skills`, and give it a row in
-   `PLAYBOOK.md` (its part of the app, when to run it).
-2. `npm run skills:sync -- --dry`. It stages every listed skill, strips private details, then
-   scans for anything private left. Public rules (`dropBlocks`, `leakPatterns`) are in the kit's
-   `skills.json`; private rules (`replace`, `replaceIn`, `denyPatterns`) are in
-   `~/.claude/skills-publish.json`, which never goes in the kit.
-3. **Refused?** Each leak line names the file, line and pattern. Fix it by adding a precise
-   `replaceIn` rule to the private file, or by rewording the source. Never delete or loosen a
-   leak or deny pattern to get a sync through; ask the user if a hit looks like a false positive.
-4. Clean: `npm run skills:sync`, then `git -C <kit> diff --stat` and read the diff of every
-   changed skill before committing.
-5. If `PLAYBOOK.md` changed, `npm run bible` to rebuild the PDF.
-6. Commit with explicit paths (`git commit --only -- skills/<name> skills.json ...`), message
-   `chore(skills): sync <names>`. Push only when the user asks.
-
-## Rules
-
-- `sync` never deletes a skill from the kit. A name dropped from `skills.json` is reported as
-  stray; removing it is a separate, confirmed step.
-- Third-party skills (shadcn, supabase, vercel-labs and others listed in `PLAYBOOK.md`) are not
-  copied into the kit. Update those from their own source: `npx skills update` or the install
-  command in the playbook.
+1. Edit the skill in `~/.claude/skills/<name>`, never the kit copy (the next publish overwrites it).
+   A new skill also needs its name in the kit's `skills.json` and a place in `PLAYBOOK.md`.
+2. In the kit: `npm run skills:sync -- --dry`. It removes private details using the kit's
+   `skills.json` and the local `~/.claude/skills-publish.json`, then refuses if anything private
+   is left.
+3. Refused: each line names the file, line and pattern. Add a precise `replaceIn` rule to the
+   local file or reword the source. Never loosen a pattern to get it through.
+4. `npm run skills:sync`, read the diff, `npm run pdf` if `PLAYBOOK.md` changed, commit with
+   explicit paths. Push only when the user asks.

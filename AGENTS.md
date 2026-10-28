@@ -4,8 +4,8 @@ Instructions for an AI agent working in or from this repo. What lives here:
 
 | Path | What |
 |---|---|
-| `PLAYBOOK.md` | The build guide: the parts of an app, each with best practice, the skill that builds it, the skill that checks it, and "done when". Source of `docs/app-playbook.pdf` |
-| `skills/`, `agents/` | Published copies of the setup, audit and check skills, plus the `audit-repo` subagent |
+| `PLAYBOOK.md` | The main parts of an app, each with best practice, a build skill, a check skill and "done when". Source of `docs/app-playbook.pdf` |
+| `skills/` | Published copies of the skills the playbook names |
 | `server.mjs`, `catalog.mjs` | The template switcher |
 | `latent-ui/` | A surface gallery and shadcn registry. Its own `AGENTS.md` governs work inside it |
 
@@ -14,19 +14,19 @@ Instructions for an AI agent working in or from this repo. What lives here:
 When asked to "follow the playbook", "build this app properly", or "what's next for this app":
 
 1. Read `PLAYBOOK.md`. Work out which part the user's app is on from what exists in their repo
-   (no `AGENTS.md` = part 1; no `docs/design/` = part 2; and so on). Say which part and why.
-2. Do one part at a time. For that part: check the "When" line still applies, run the **Build**
+   (no `AGENTS.md` = Setup; no `docs/design/` = Design; and so on). Say which part and why.
+2. Do one part at a time. For that part: run the **Build**
    skill, then the **Check** skill, then confirm the **Done when** line with a command, not a claim.
 3. Run skills one at a time, never as a batch. Each reads what the previous one left behind.
-4. A skill from "Other people's skills" that is not installed: give the user its install command
-   from the table and wait. Do not substitute your own version of it.
+4. `supabase` is not in this kit. If it is missing, give the user the install command from
+   "Getting the skills" and wait. Do not substitute your own version of it.
 5. Unfamiliar tech or a "what do the pros do" question: run `/research <topic>` first.
 6. Do not choose a template, a look or a vendor for the user. Show the options and what each costs.
 
 ## Commands
 
 ```bash
-npm run skills:install     # copy skills/ and agents/ into ~/.claude (add -- --project for ./.claude)
+npm run skills:install     # copy skills/ into ~/.claude/skills (add -- --project for ./.claude)
 npm run skills:status      # what install would change, writes nothing
 npm run skills:sync        # maintainer only, see below
 npm run pdf                # rebuild docs/app-playbook.pdf from PLAYBOOK.md
@@ -52,7 +52,8 @@ the switcher skips its registry build; for registry work run `cd latent-ui && np
 The skills in `skills/` are generated copies. The source is the maintainer's `~/.claude/skills`.
 
 1. Edit the skill in `~/.claude/skills/<name>`, never in `skills/` (the next sync overwrites it).
-2. New skill: add its name to `skills.json` and a row to the PLAYBOOK map and skill table.
+2. New skill: add its name to `skills.json` and give it a place in the PLAYBOOK map. Keep it to
+   one build and one check skill per part.
 3. `npm run skills:sync -- --dry`. It strips private details and refuses if anything private is
    left. Public rules (`dropBlocks`, `leakPatterns`) are in `skills.json`. Private rules
    (`replace`, `replaceIn`, `denyPatterns`) are in `~/.claude/skills-publish.json`, which never
