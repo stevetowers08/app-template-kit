@@ -1,0 +1,61 @@
+{
+  "$comment": "Which skills this repo publishes. The find-and-replace rules that strip private details live in the maintainer's ~/.claude/skills-publish.json, because the text they find is itself private. See AGENTS.md -> Publishing skills.",
+  "skills": [
+    "setup-new-repo",
+    "setup-design-system",
+    "setup-motion",
+    "setup-landing-page-mockup",
+    "setup-error-handling",
+    "setup-testing",
+    "setup-sentry",
+    "audit-architecture",
+    "audit-documentation",
+    "audit-repo",
+    "audit-design-system",
+    "audit-frontend-design",
+    "audit-component-size",
+    "audit-loading-animations",
+    "audit-page-loading",
+    "audit-performance",
+    "audit-api",
+    "audit-database",
+    "audit-error-handling",
+    "audit-console-logs",
+    "audit-security",
+    "audit-dependencies",
+    "audit-typescript",
+    "audit-tests",
+    "audit-observability",
+    "audit-production-readiness",
+    "audit-skill-freshness",
+    "check-testing",
+    "check-cleanup",
+    "build-landing-page",
+    "product-demo-video",
+    "research",
+    "update-skills"
+  ],
+  "agents": [
+    "audit-repo"
+  ],
+  "dropBlocks": [
+    {
+      "$comment": "Pointers into a private knowledge base. The playbook carries the public version.",
+      "startsWith": "> **Load first"
+    },
+    {
+      "startsWith": "- **Obsidian - Wiki**"
+    },
+    {
+      "startsWith": "- Vault ("
+    }
+  ],
+  "leakPatterns": [
+    "C:[\\\\/]Users",
+    "/Users/[a-z]",
+    "\\bTowers\\b",
+    "\\bsteve\\b",
+    "[A-Za-z0-9._%+-]+@(?!example\\.)[A-Za-z0-9.-]+\\.(com|io|ai|co|net|org|au)\\b",
+    "\b(?!127.0.0.1\b)(?!0.0.0.0\b)d{1,3}.d{1,3}.d{1,3}.d{1,3}\b"
+  ]
+}

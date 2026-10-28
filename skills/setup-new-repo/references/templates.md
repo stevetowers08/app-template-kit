@@ -100,8 +100,7 @@ Add `.mcp.json` only if and when one is created, and only if it holds a token.
 
 ## What earned its place, and how it was decided
 
-Surveyed across five repos actually on this machine (`retention-engine`, `RankAgent`,
-`command-center`, `fill-your-venue`, `tour-bi-polaris`). The vault rule is: **do not build a repo
+Surveyed across five production repos (called A to E below). The vault rule is: **do not build a repo
 template from one repo - extract only what survived contact with the second.**
 
 | Convention | Repos using it | Verdict |
@@ -118,12 +117,12 @@ template from one repo - extract only what survived contact with the second.**
 
 Three measured failures the same survey turned up, which the trees below are shaped to avoid:
 
-- **Empty directories.** `tour-bi-polaris/.claude/` carries `agents/`, `commands/` and `hooks/`,
+- **Empty directories.** Repo A's `.claude/` carries `agents/`, `commands/` and `hooks/`,
   all three completely empty. This is the failure mode, in the most mature repo of the five.
-- **The plural drift.** `tour-bi-polaris` has both `docs/prd/` **and** `docs/prds/`;
-  `command-center` has `docs/prd/` and `docs/prdv1`. Pick one name, write it into AGENTS.md, and
+- **The plural drift.** Repo A has both `docs/prd/` **and** `docs/prds/`;
+  repo B has `docs/prd/` and `docs/prdv1`. Pick one name, write it into AGENTS.md, and
   never create the sibling.
-- **Root and docs-root clutter.** `retention-engine/docs/` mixes `DEPLOY.md`, `SECRETS.md` and
+- **Root and docs-root clutter.** Repo C's `docs/` mixes `DEPLOY.md`, `SECRETS.md` and
   two loose PRD dumps in with its subdirectories. The hub exists to prevent this; use it.
 
 ## The docs tree

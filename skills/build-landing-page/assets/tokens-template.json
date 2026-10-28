@@ -1,0 +1,52 @@
+{
+  "_comment": "3-tier token structure: primitive -> semantic -> component. Fill primitives from the client's brand (or extracted from their live site), derive semantic roles from primitives, derive component tokens from semantic roles. Never let generated code reference a primitive or a raw hex directly.",
+
+  "primitive": {
+    "color": {
+      "navy-900": "#000000",
+      "navy-700": "#000000",
+      "accent-500": "#000000",
+      "neutral-50": "#000000",
+      "neutral-900": "#000000"
+    },
+    "font": {
+      "display": "REPLACE - deliberate pairing, never Inter alone",
+      "body": "REPLACE"
+    },
+    "radius": {
+      "sm": "4px",
+      "md": "8px",
+      "lg": "16px"
+    },
+    "spacing-unit": "4px"
+  },
+
+  "semantic": {
+    "color": {
+      "bg-base": "{primitive.color.navy-900}",
+      "bg-surface": "{primitive.color.navy-700}",
+      "text-primary": "{primitive.color.neutral-50}",
+      "text-muted": "REPLACE",
+      "action-primary": "{primitive.color.accent-500}",
+      "border-default": "REPLACE"
+    },
+    "radius": {
+      "default": "{primitive.radius.md}"
+    }
+  },
+
+  "component": {
+    "button": {
+      "bg-primary-default": "{semantic.color.action-primary}",
+      "bg-primary-hover": "REPLACE - do not reuse the default value, define the hover state explicitly",
+      "text-color": "REPLACE",
+      "radius": "REPLACE - state the actual value, e.g. pill (999px) or square (0px), never leave to default"
+    },
+    "card": {
+      "bg": "{semantic.color.bg-surface}",
+      "border": "REPLACE - state border-only vs shadow-based explicitly, do not default to shadow-md"
+    }
+  },
+
+  "_enforcement_reminder": "Ship a lint (or at minimum a manual grep pass: rg 'bg-\\[#|text-\\[#|p-\\[[0-9]' src/) that fails on any raw hex/px value outside this file. Component-generation prompts must resolve everything through semantic/component tokens, never primitives directly."
+}

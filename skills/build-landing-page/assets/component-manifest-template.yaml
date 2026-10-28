@@ -1,0 +1,44 @@
+# Copy per component/section that gets custom-built or pulled from a registry
+# and adapted. Save alongside the component (e.g. components/hero/hero.manifest.yaml).
+# The when_to_use / when_not_to_use pair is the single highest-leverage field —
+# "use for the homepage" is vague and useless; "do not use anywhere without real
+# imagery available" is an enforceable rule.
+
+name: REPLACE                        # e.g. "Hero (Editorial Split)"
+description: REPLACE                 # one line, what it is and where it's from (e.g. "From Tailark")
+category: REPLACE                    # hero | features | social-proof | pricing | testimonial | faq | cta | footer
+
+when_to_use:
+  - REPLACE
+  - REPLACE
+
+when_not_to_use:
+  - REPLACE                          # be concrete: "do not use X here because Y", not a vague caution
+
+slots:
+  - name: REPLACE
+    description: REPLACE             # e.g. "media - real photography only, never a stock/gradient placeholder"
+
+props:
+  - name: REPLACE
+    type: REPLACE
+    default: REPLACE
+
+tokens_used:
+  # generate this list from the actual CSS/className usage at build time if possible —
+  # never hand-author it, that's exactly how it silently drifts from the real component
+  - REPLACE
+
+---
+# Composition / recipe example — how sections assemble into an actual page,
+# not just what each one is in isolation. One file per named page pattern.
+
+# patterns/PAGE-NAME.pattern.yaml
+name: REPLACE                        # e.g. "GTM-specialist recruiter homepage"
+sections_used: [REPLACE, REPLACE, REPLACE]
+notes: >
+  REPLACE — call out any anti-slop rule that applies to this specific
+  assembly (e.g. "features section uses an asymmetric list, never 3
+  identical icon cards"; "case studies require a named company + a real
+  metric, do not fabricate"; "final CTA restates the hero's specific
+  promise, larger than the hero CTA").

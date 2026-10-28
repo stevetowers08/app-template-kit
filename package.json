@@ -1,11 +1,18 @@
 {
   "name": "app-template-kit",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "Browse admin app templates in one window, and the Claude Code setup skills that scaffold a repo from one.",
+  "description": "A start-to-finish app playbook, the Claude Code skills that build and check each part, and a switcher for browsing admin templates.",
   "scripts": {
     "clone": "node scripts/clone-templates.mjs",
-    "start": "node server.mjs"
+    "start": "node server.mjs",
+    "skills:install": "node scripts/skills.mjs install",
+    "skills:status": "node scripts/skills.mjs status",
+    "skills:sync": "node scripts/skills.mjs sync",
+    "pdf": "node scripts/build-pdf.mjs"
+  },
+  "devDependencies": {
+    "marked": "18.1.0"
   }
 }
