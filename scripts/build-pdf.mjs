@@ -69,6 +69,9 @@ html = html.replace(
 );
 html = html.replace(/((?:<div class="meta[\s\S]*?<\/div>\s*)+)/g, '<div class="strip">$1</div>');
 
+// The full repo link sits right under the title.
+html = html.replace(/(<h1[^>]*>[\s\S]*?<\/h1>)/, `$1\n<p class="repo"><a href="${REPO}">${REPO}</a></p>`);
+
 // The first table is the map.
 html = html.replace("<table>", '<table class="map">');
 
@@ -101,7 +104,9 @@ const page = `<!doctype html>
 
   /* Top: title, how to use, the map. Flows straight into the parts. */
   h1 { font-size: 20pt; line-height: 1.15; letter-spacing: -0.01em; color: var(--ink); margin: 0 0 2mm; font-weight: 700; }
-  .cover > p:first-of-type { font-size: 10.5pt; color: var(--ink); }
+  .cover > p.repo { font: 500 9pt/1.3 "Cascadia Mono", Consolas, "SF Mono", Menlo, monospace; margin: 0 0 3mm; }
+  .cover > p.repo a { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
+  .cover > p.repo + p { font-size: 10.5pt; color: var(--ink); }
   table.map { width: 100%; border-collapse: collapse; margin: 3mm 0 3mm; }
   table.map th {
     text-align: left; font-size: 7pt; font-weight: 600; text-transform: uppercase;
